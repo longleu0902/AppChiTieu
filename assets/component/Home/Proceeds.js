@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect } from 'react'
 import { ScrollView, TouchableOpacity, View, StyleSheet, Text, TextInput, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { Button } from '@rneui/themed';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -17,14 +17,17 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import ToastManager, { Toast } from 'toastify-react-native';
 import dayjs from 'dayjs';
+import {proceedsChange} from '../../Redux/userListReducer';
+import { useDispatch } from 'react-redux';
+
 
 
 
 const Proceeds = () => {
-    const currentDate = dayjs().format('DD/MM/YYYY');
     const [price, setPrice] = useState('');
     const [note, setNote] = useState('');
     const navigation = useNavigation();
+    const dispatch = useDispatch()
     const defaultList = [
         {
             id: 1,
@@ -69,7 +72,61 @@ const Proceeds = () => {
             active: false,
         },
     ]
-    const [renderList, setRenderList] = useState(defaultList)
+    const [renderList, setRenderList] = useState(defaultList);
+    const [currentDate, setCurrentDate] = useState(dayjs());
+    const [day, setDay] = useState('');
+
+
+    const updateTime = (time) => {
+        const dayOfWeek = time.day();
+        let dayOfWeekString;
+        switch (dayOfWeek) {
+            case 0:
+                dayOfWeekString = 'Chủ nhật';
+                break;
+            case 1:
+                dayOfWeekString = 'Thứ hai';
+                break;
+            case 2:
+                dayOfWeekString = 'Thứ ba';
+                break;
+            case 3:
+                dayOfWeekString = 'Thứ tư';
+                break;
+            case 4:
+                dayOfWeekString = 'Thứ năm';
+                break;
+            case 5:
+                dayOfWeekString = 'Thứ sáu';
+                break;
+            case 6:
+                dayOfWeekString = 'Thứ bảy';
+                break;
+            default:
+                dayOfWeekString = '';
+        }
+        return dayOfWeekString;
+    }
+    useEffect(()=> {
+        let _day = updateTime(currentDate);
+        setDay(_day)
+    },[])
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            console.log('thay doi gio')
+            let _day;
+            const now = dayjs();
+            if (now.date() !== currentDate.date() && now.day() !== currentDate.day()) {
+                setCurrentDate(now);
+                _day = updateTime(now);
+                setDay(_day)
+            }
+        }, 10 * 60 * 1000);
+
+        return () => clearInterval(timer);
+    }, [currentDate]);
+
 
 
     const handleChangeList = (id) => {
@@ -85,18 +142,24 @@ const Proceeds = () => {
         }
     }
     const handleClick = () => {
-        const category = renderList.find(item => item.active == true)
+        const category = renderList.find(item => item.active == true);
+        const clock = dayjs();
         if (price && price.length > 0) {
             const arr = {
-                time: currentDate,
+                day : day ,
+                time: currentDate.format('DD-MM-YYYY'),
+                clock : clock.format("HH:mm:ss"),
                 price: price,
                 note: note,
-                category: category ? category.title : 'Khác'
+                category: category ? category.title : 'Khác',
+                type : 'proceeds',
             }
-            console.log(">>>chect arr", arr)
+            dispatch(proceedsChange(arr))
+            setPrice('');
+            setNote('');
             Toast.success('Nhập thành công', 'top')
         } else {
-            Toast.error("Điền đủ thông tin", 'top')
+            Toast.error("Đéo nhập tiền à", 'top')
         }
     }
     const handlePressScreen = () => {
@@ -110,11 +173,11 @@ const Proceeds = () => {
     return (
         <TouchableWithoutFeedback onPress={handlePressScreen}>
             <View style={styles.container} >
-                <ToastManager />
+            <ToastManager textStyle={{fontSize:14}} width={300} height={50} positionValue={-80} />
                 <View style={styles.Input}>
                     <FontAwesomeIcon style={styles.icon} icon={faCalendar} />
                     <TextInput style={{ width: '100%' , color:'#ccc' }}
-                        value={currentDate}
+                         value={`${day}-${currentDate.format('DD-MM-YYYY')}`}
                         editable={false}
                     />
 
@@ -133,6 +196,8 @@ const Proceeds = () => {
                     <TextInput style={{ width: '100%' }}
                         placeholder='Ghi chú'
                         onChangeText={(text) => setNote(text)}
+                        maxLength={25}
+                        value={note}
                     />
                 </View>
 
@@ -147,8 +212,6 @@ const Proceeds = () => {
                                 </TouchableOpacity>
                             )
                         })}
-
-
                     </View>
                 </View>
                 <View style={{ marginTop: 15 }}>
@@ -163,14 +226,10 @@ const Proceeds = () => {
                             size: 15,
                             color: '#000',
                         }}
-
                         iconRight
                         iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
                     >Nhập khoản thu</Button>
                 </View>
-
-
-
             </View>
         </TouchableWithoutFeedback>
 

@@ -52,7 +52,7 @@ const Nav = () => {
                         <Text
                             style={[style.Text, index === 0 && style.activeText]}
                         >
-                            Trang chủ</Text>
+                            Nhập vào</Text>
 
 
                     </Tab.Item >
@@ -65,7 +65,7 @@ const Nav = () => {
                             icon={faCalendar} />
                         <Text
                             style={[style.Text, index === 1 && style.activeText]}
-                        >Lịch</Text>
+                        >Lịch sử</Text>
                     </Tab.Item>
                     <Tab.Item
 
@@ -89,22 +89,6 @@ const Nav = () => {
                     </Tab.Item>
                 </Tab>
             </SafeAreaView>
-            {/* <Button
-                title="Go to About"
-                onPress={() => navigation.navigate('Setting')}
-            />
-              <Button
-                title="Go to home"
-                onPress={() => navigation.navigate('Home')}
-            />
-              <Button
-                title="Go to cadenler"
-                onPress={() => navigation.navigate('Calender')}
-            />
-                <Button
-                title="Go to Statistics"
-                onPress={() => navigation.navigate('Statistics')}
-            /> */}
         </>
     )
 }
