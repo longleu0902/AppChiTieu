@@ -207,7 +207,14 @@ const Proceeds = () => {
                     <View style={styles.listItem}>
                         {renderList.map((item, index) => {
                             return (
-                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index} style={item.active === false ? styles.boxList : styles.boxListActive}>
+                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index} 
+                                // style={item.active === false ? styles.boxList : styles.boxListActive}
+                                style={[
+                                    styles.boxList,
+                                    item.active === false ? null : styles.boxListActive,
+                                    { borderColor: item.active === false ? themeBackGround : themeColorActive }
+                                  ]}
+                                >
                                     <FontAwesomeIcon style={{ color: `${item.colorIcon}` }} icon={item.icon} fade />
                                     <Text style={{ paddingVertical: 4 }}>{item.title}</Text>
                                 </TouchableOpacity>
@@ -282,7 +289,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: 5,
         marginVertical: 5,
-        borderWidth: 2,
+        borderWidth: 3,
         borderColor: "#000",
         alignItems: 'center',
         paddingHorizontal: 10,
