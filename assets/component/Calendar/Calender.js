@@ -17,18 +17,17 @@ import { useSelector } from 'react-redux';
 
 const Calender = () => {
     const windowHeight = Dimensions.get('window').height;
-    const moneySpent = useSelector(state => state.user.moneySpent);
-    const proceeds = useSelector(state => state.user.proceeds);
+    const list = useSelector(state => state.user.listHistory);
+    const themeBackGround = useSelector(state => state.themeColor.backGround);
+    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
+    const themeColorText = useSelector(state=> state.themeColor.colorText);
+
+
 
     const [history, setHistory] = useState([]);
-
-    // console.log("check store moneySpent", moneySpent)
-    // console.log("check store proceeds", proceeds)
     const buildHistory = () => {
-        //Gộp hai mảng thành một mảng duy nhất
-        const mergedArray = moneySpent.concat(proceeds);
         // Sắp xếp mảng theo key thời gian
-        mergedArray.sort((a, b) => {
+        const mergedArray = list.sort((a, b) => {
             const timeA = a.clock.split(":").map(Number);
             const timeB = b.clock.split(":").map(Number);
             // So sánh giờ và phút của hai đối tượng
@@ -50,6 +49,8 @@ const Calender = () => {
     const [totalProceeds, setTotalProceeds] = useState(0);
 
     const priceTotal = () => {
+        const moneySpent = list.filter((item) => item.type == "moneySpent");
+        const proceeds = list.filter((item) => item.type == "proceeds")
         let totalMoneySpent = moneySpent.reduce((a, b) => {
             let priceWithoutComma = b.price.replace(/,/g, '');
             return Number(a) + Number(priceWithoutComma)
@@ -67,7 +68,7 @@ const Calender = () => {
     useEffect(() => {
         priceTotal();
         buildHistory();
-    }, [moneySpent, proceeds])
+    }, [list])
 
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -75,11 +76,11 @@ const Calender = () => {
 
     return (
         <>
-            <View style={[styles.container, { height: windowHeight }]}>
-                <View style={styles.header}>
-                    <Text style={styles.textHeader}>Lịch sử</Text>
+            <View style={[styles.container, { height: windowHeight } , {backgroundColor : themeBackGround}]}>
+                <View style={[styles.header,{backgroundColor:themeBackGround}]}>
+                    <Text style={[styles.textHeader,{color:themeColorText}]}>Lịch sử</Text>
                 </View>
-                <View style={styles.body}>
+                <View style={[styles.body,{backgroundColor:themeBackGround}]}>
                     <View style={styles.bodyHeader}>
                         <View style={styles.bodyHeaderItem}>
                             <Text style={{ fontSize: 12, paddingBottom: 4 }}>Thu nhập</Text>
@@ -100,9 +101,9 @@ const Calender = () => {
                                 return (
                                     <View key={index} style={styles.item}>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <View style={styles.boxDate}>
-                                                <Text style={{ fontSize: 10, paddingBottom: 5, fontWeight: 700 }}>{item.day}</Text>
-                                                <Text style={{ fontSize: 12 }}>{item.time}</Text>
+                                            <View style={[styles.boxDate ,{backgroundColor : themeBackGround}]}>
+                                                <Text style={{ fontSize: 10, paddingBottom: 5, fontWeight: 700 ,color: themeColorText }}>{item.day}</Text>
+                                                <Text style={{ fontSize: 12 ,color: themeColorText }}>{item.time}</Text>
                                             </View>
                                             <View>
                                                 <Text style={{ fontSize: 14, fontWeight: 500, paddingBottom: 10 }}>{item.category}</Text>
@@ -110,13 +111,13 @@ const Calender = () => {
                                             </View>
                                         </View>
                                         <View style={{ flexDirection: 'column', alignContent: 'flex-end' }}>
-                                            <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
-                                            <Text style={{ color: item.type == 'moneySpent' ? '#DC143C' : '#50C7C7', paddingBottom: 10 }}>
-                                                {item.type == 'moneySpent' ? `-${item.price}` : `+${item.price}`} VND
-                                            </Text>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                <Text style={{ color: item.type == 'moneySpent' ? '#DC143C' : '#50C7C7', paddingBottom: 10 }}>
+                                                    {item.type == 'moneySpent' ? `-${item.price}` : `+${item.price}`} VND
+                                                </Text>
                                             </View>
-                                            <View style={{flexDirection:'row',justifyContent:'flex-end'}}>
-                                            <Text style={{ fontSize: 12 }}>{item.clock}</Text>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                <Text style={{ fontSize: 12 }}>{item.clock}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -132,11 +133,11 @@ const Calender = () => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFF0F5',
+        // backgroundColor: '#FFF0F5',
     },
     header: {
         height: 100,
-        backgroundColor: '#FFF0F5',
+        // backgroundColor: '#FFF0F5',
         flexDirection: 'column',
         justifyContent: 'flex-end',
         alignItems: 'center',
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     body: {
-        backgroundColor: '#FFF0F5',
+        // backgroundColor: '#FFF0F5',
     },
     bodyHeader: {
         height: 70,
@@ -171,12 +172,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         backgroundColor: '#fff',
-        marginVertical: 7,
+        marginVertical: 3,
         marginHorizontal: 8,
         borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.4,
+        shadowOpacity: 0.8,
         shadowRadius: 2,
         elevation: 10,
 
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     boxDate: {
         width: 80,
         height: 50,
-        backgroundColor: '#FFF0F5',
+        // backgroundColor: '#FFF0F5',
         alignItems: 'center',
         flexDirection: 'column',
         borderRadius: 5,

@@ -17,13 +17,14 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import ToastManager, { Toast } from 'toastify-react-native';
 import dayjs from 'dayjs';
-import {proceedsChange} from '../../Redux/userListReducer';
-import { useDispatch } from 'react-redux';
-
-
-
+import {listHistory} from '../../Redux/userListReducer';
+import { useDispatch , useSelector } from 'react-redux';
 
 const Proceeds = () => {
+    const themeBackGround = useSelector(state => state.themeColor.backGround);
+    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
+    const themeColorText = useSelector(state=> state.themeColor.colorText);
+
     const [price, setPrice] = useState('');
     const [note, setNote] = useState('');
     const navigation = useNavigation();
@@ -154,7 +155,7 @@ const Proceeds = () => {
                 category: category ? category.title : 'Khác',
                 type : 'proceeds',
             }
-            dispatch(proceedsChange(arr))
+            dispatch(listHistory(arr))
             setPrice('');
             setNote('');
             Toast.success('Nhập thành công', 'top')
@@ -218,13 +219,13 @@ const Proceeds = () => {
                     <Button
                         onPress={handleClick}
                         style={{ marginTop: 15 }}
-                        buttonStyle={{ backgroundColor: '#FFF0F5', borderRadius: 10 }}
-                        titleStyle={{ color: '#000' }}
+                        buttonStyle={{ backgroundColor: themeBackGround, borderRadius: 10 }}
+                        titleStyle={{ color:themeColorText }}
                         icon={{
                             name: 'arrow-right',
                             type: 'font-awesome',
                             size: 15,
-                            color: '#000',
+                            color: themeColorText,
                         }}
                         iconRight
                         iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}

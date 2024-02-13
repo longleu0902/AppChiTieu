@@ -5,11 +5,15 @@ import { Tab } from '@rneui/themed';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouse, faCalendar, faChartPie, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 
 
 const Nav = () => {
     const [index, setIndex] = useState(0);
+    const themeBackGround = useSelector(state => state.themeColor.backGround);
+    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
+    const themeColorText = useSelector(state=> state.themeColor.colorText);
 
     const navigation = useNavigation();
     // console.log(selectedIndex)
@@ -37,20 +41,20 @@ const Nav = () => {
     return (
         <>
             <SafeAreaView>
-                <Tab style={style.Tab}
+                <Tab style={[style.Tab, {backgroundColor : themeBackGround}]}
                     value={index}
                     onChange={(e) => setIndex(e)}
-
+                    disableIndicator
                 >
                     <Tab.Item
                         style={style.tabItem}
                     >
                         <FontAwesomeIcon
-                            color={index === 0 ? '#C71585' : ""}
+                            color={index === 0 ? themeColorActive : themeColorText}
                             icon={faHouse}
                         />
                         <Text
-                            style={[style.Text, index === 0 && style.activeText]}
+                            style={[style.Text,{color:themeColorText}, index === 0 && {color : themeColorActive},]}
                         >
                             Nhập vào</Text>
 
@@ -61,29 +65,29 @@ const Nav = () => {
                     >
 
                         <FontAwesomeIcon
-                            color={index === 1 ? '#C71585' : ""}
+                            color={index === 1 ? themeColorActive : themeColorText}
                             icon={faCalendar} />
                         <Text
-                            style={[style.Text, index === 1 && style.activeText]}
+                            style={[style.Text, {color:themeColorText},index === 1 && {color : themeColorActive}]}
                         >Lịch sử</Text>
                     </Tab.Item>
                     <Tab.Item
 
                         style={style.tabItem}>
                         <FontAwesomeIcon
-                            color={index === 2 ? '#C71585' : ""}
+                            color={index === 2 ? themeColorActive : themeColorText}
                             icon={faChartPie} />
                         <Text
-                            style={[style.Text, index === 2 && style.activeText]}
+                            style={[style.Text,{color:themeColorText}, index === 2 && {color : themeColorActive}]}
                         >Báo cáo</Text>
                     </Tab.Item>
                     <Tab.Item
                         style={style.tabItem}>
                         <FontAwesomeIcon
-                            color={index === 3 ? '#C71585' : ""}
+                            color={index === 3 ? themeColorActive : themeColorText}
                             icon={faGear} />
                         <Text
-                            style={[style.Text, index === 3 && style.activeText]}
+                            style={[style.Text ,{color:themeColorText}, index === 3 && {color : themeColorActive}]}
                         >
                             Cài Đặt</Text>
                     </Tab.Item>
@@ -96,7 +100,6 @@ const style = StyleSheet.create({
     Tab: {
         height: 90,
         paddingBottom: 30,
-        backgroundColor: "#FFF0F5",
         position: 'absolute',
         bottom: 0,
         left: 0,
@@ -116,9 +119,6 @@ const style = StyleSheet.create({
         paddingVertical: 10,
         color: "#000"
     },
-    activeText: {
-        color: "#C71585"
-    }
 })
 
 export default Nav;

@@ -20,11 +20,16 @@ import { useNavigation } from '@react-navigation/native';
 import ToastManager, { Toast } from 'toastify-react-native';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
-import { proceedsChange, moneySpent } from '../../Redux/userListReducer'
+import { listHistory } from '../../Redux/userListReducer'
 
 
 
 const MoneySpent = () => {
+    const themeBackGround = useSelector(state => state.themeColor.backGround);
+    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
+    const themeColorText = useSelector(state=> state.themeColor.colorText);
+
+
     const [price, setPrice] = useState('');
     const [note, setNote] = useState('');
     const navigation = useNavigation();
@@ -184,7 +189,7 @@ const MoneySpent = () => {
                 category: category ? category.title : 'Khác',
                 type : 'moneySpent',
             }
-            dispatch(moneySpent(arr))
+            dispatch(listHistory(arr))
             setPrice('');
             setNote('');
             Toast.success('Nhập thành công', 'top' )
@@ -231,7 +236,14 @@ const MoneySpent = () => {
                     <View style={styles.listItem}>
                         {renderList.map((item, index) => {
                             return (
-                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index} style={item.active === false ? styles.boxList : styles.boxListActive}>
+                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index} 
+                                // style={item.active === false ? styles.boxList : styles.boxListActive}
+                                style={[
+                                    styles.boxList,
+                                    item.active === false ? null : styles.boxListActive,
+                                    { borderColor: item.active === false ? themeBackGround : themeColorActive }
+                                  ]}
+                                >
                                     <FontAwesomeIcon style={{ color: `${item.colorIcon}` }} icon={item.icon} fade />
                                     <Text style={{ paddingVertical: 4 }}>{item.title}</Text>
                                 </TouchableOpacity>
@@ -245,13 +257,13 @@ const MoneySpent = () => {
                     <Button
                         onPress={handleClick}
                         style={{ marginTop: 15 }}
-                        buttonStyle={{ backgroundColor: '#FFF0F5', borderRadius: 10 }}
-                        titleStyle={{ color: '#000' }}
+                        buttonStyle={{ backgroundColor:themeBackGround, borderRadius: 10 }}
+                        titleStyle={{ color: themeColorText }}
                         icon={{
                             name: 'arrow-right',
                             type: 'font-awesome',
                             size: 15,
-                            color: '#000',
+                            color: themeColorText,
                         }}
 
                         iconRight
@@ -312,7 +324,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: 5,
         marginVertical: 5,
-        borderWidth: 2,
+        borderWidth: 3,
         borderColor: "#000",
         alignItems: 'center',
         paddingHorizontal: 10,

@@ -2,21 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     user: '',
-    moneySpent: [],
-    proceeds: []
+    listHistory:[]
 }
 
  const userListSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        proceedsChange: (state, action) => {
-            state.proceeds.unshift(action.payload)
+        listHistory: (state, action) => {
+            state.listHistory.unshift(action.payload)
         },
-        moneySpent: (state, action) => {
-            state.moneySpent.unshift(action.payload)
-        }
     }
 })
-export const {proceedsChange , moneySpent  } = userListSlice.actions
+export const {listHistory } = userListSlice.actions
 export default userListSlice.reducer
