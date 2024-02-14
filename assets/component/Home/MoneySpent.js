@@ -241,7 +241,7 @@ const MoneySpent = () => {
                                 style={[
                                     styles.boxList,
                                     item.active === false ? null : styles.boxListActive,
-                                    { borderColor: item.active === false ? themeBackGround : themeColorActive }
+                                    { borderColor: item.active === false ? '#ccc' : themeColorActive }
                                   ]}
                                 >
                                     <FontAwesomeIcon style={{ color: `${item.colorIcon}` }} icon={item.icon} fade />

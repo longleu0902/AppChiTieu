@@ -12,10 +12,12 @@ import {
     Dimensions
 } from 'react-native';
 import { faGear, faFloppyDisk, faRightFromBracket, faChartPie } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { ListItem, CheckBox, Button } from '@rneui/themed';
-import { backGround  , colorActive ,colorText } from '../../Redux/themeColorReducer'
+import { backGround  , colorActive ,colorText } from '../../Redux/themeColorReducer';
+import {setLogin} from '../../Redux/loginReducer';
+
 
 
 
@@ -54,14 +56,6 @@ const Setting = () => {
         },
 
     ])
-    // const pinkTheme = {
-    //     backGround : "#FFF0F5",
-    //     colorActive :'#C71585',
-    //     colorText :'#000',
-    //     // backGround : "#000",
-    //     // colorActive :'#585858',
-    //     // colorText :'#fff',
-    // }
     const handleClickCheck = (id) => {
         const defaultValue = interfaceColors.forEach(item => item.check = false)
         setInterfaceColor(defaultValue)
@@ -92,6 +86,14 @@ const Setting = () => {
             }
         }
 
+    }
+
+    const handleLogOut = () => {
+        const payload = {
+                token: '',
+                isAuthentication : false
+        }
+        dispatch(setLogin(payload))
     }
     return (
         <>
@@ -146,7 +148,7 @@ const Setting = () => {
                         </ListItem>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.bodyItem} >
+                    <TouchableOpacity onPress={handleLogOut} style={styles.bodyItem} >
                         <ListItem containerStyle={{ borderRadius: 10 }}>
                             <ListItem.Content>
                                 <ListItem.Title style={{ color: "#000" }}>

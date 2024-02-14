@@ -5,6 +5,7 @@ import Home from '../component/Home/Home';
 import Calender from '../component/Calendar/Calender';
 import Statistics from '../component/Statistics/Statistics';
 import Setting from '../component/Setting/Setting';
+import Login from '../component/Login/Login';
 
 const Stack = createStackNavigator();
 

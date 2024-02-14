@@ -27,7 +27,8 @@ const Calender = () => {
     const [history, setHistory] = useState([]);
     const buildHistory = () => {
         // Sắp xếp mảng theo key thời gian
-        const mergedArray = list.sort((a, b) => {
+        const _list = [...list]
+        let mergedArray = _list.sort((a, b) => {
             const timeA = a.clock.split(":").map(Number);
             const timeB = b.clock.split(":").map(Number);
             // So sánh giờ và phút của hai đối tượng
@@ -113,7 +114,7 @@ const Calender = () => {
                                         <View style={{ flexDirection: 'column', alignContent: 'flex-end' }}>
                                             <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                                                 <Text style={{ color: item.type == 'moneySpent' ? '#DC143C' : '#50C7C7', paddingBottom: 10 }}>
-                                                    {item.type == 'moneySpent' ? `-${item.price}` : `+${item.price}`} VND
+                                                    {item.type == 'moneySpent' ? `-${item?.price}` : `+${item?.price}`} VND
                                                 </Text>
                                             </View>
                                             <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
