@@ -20,7 +20,9 @@ import { useNavigation } from '@react-navigation/native';
 import ToastManager, { Toast } from 'toastify-react-native';
 import dayjs from 'dayjs';
 import { useSelector, useDispatch } from 'react-redux';
-import { listHistory } from '../../Redux/userListReducer'
+import { listHistory } from '../../Redux/userListReducer';
+import { fetchCreate } from '../../service/userService';
+
 
 
 
@@ -29,7 +31,7 @@ const MoneySpent = () => {
     const themeColorActive = useSelector(state=> state.themeColor.colorActive);
     const themeColorText = useSelector(state=> state.themeColor.colorText);
 
-
+    const userName = useSelector(state => state.login.payload.username);
     const [price, setPrice] = useState('');
     const [note, setNote] = useState('');
     const navigation = useNavigation();
@@ -176,11 +178,12 @@ const MoneySpent = () => {
 
         }
     }
-    const handleClick = () => {
+    const handleClick = async () => {
         const category = renderList.find(item => item.active == true)
         const clock = dayjs();
         if (price && price.length > 0) {
             const arr = {
+                username : userName,
                 day : day ,
                 time: currentDate.format('DD-MM-YYYY'),
                 clock : clock.format("HH:mm:ss"),
@@ -189,7 +192,8 @@ const MoneySpent = () => {
                 category: category ? category.title : 'Khác',
                 type : 'moneySpent',
             }
-            dispatch(listHistory(arr))
+            // dispatch(listHistory(arr))
+            await fetchCreate(arr);
             setPrice('');
             setNote('');
             Toast.success('Nhập thành công', 'top' )
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: 5,
         marginVertical: 5,
-        borderWidth: 3,
+        borderWidth: 2,
         borderColor: "#000",
         alignItems: 'center',
         paddingHorizontal: 10,

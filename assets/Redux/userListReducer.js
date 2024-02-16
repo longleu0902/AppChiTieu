@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     user: '',
-    listHistory:[]
+    listHistory:''
 }
 
  const userListSlice = createSlice({
@@ -10,7 +10,7 @@ const initialState = {
     initialState,
     reducers: {
         listHistory: (state, action) => {
-            state.listHistory.unshift(action.payload)
+            state.listHistory = action.payload
         },
     }
 })

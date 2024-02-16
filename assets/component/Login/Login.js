@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ToastManager, { Toast } from 'toastify-react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogin } from '../../Redux/loginReducer';
-import { fetchUser } from "../../service/userService"
-import axios from 'axios';;
+import { fetchUser, fetchUserRegister  } from "../../service/userService"
+
 
 
 
@@ -26,20 +26,23 @@ const Login = () => {
         setOpenRegister(prev => !prev)
     }
 
-    const validInput = () => {
+    const validInput = (user, password, againPassword, phone) => {
         if (user == '' || password == '' || againPassword == '' || phone == '') {
             Toast.error('Vui lòng nhập đủ thông tin')
+            return false;
         } else if (password.length < 6) {
             Toast.error('Mật khẩu phải trên 6 kí tự')
+            return false;
         } else if (password !== againPassword) {
             Toast.error('Mật khẩu nhập lại không đúng')
+            return false;
         } else {
-            Toast.success('Đăng kí thành công');
             setUser('');
             setPassword('');
             setAgainPassword('');
             setPhone('');
             handleOpenRegister();
+            return true;
         }
     }
     const handleLogin = async () => {
@@ -52,35 +55,45 @@ const Login = () => {
                 Toast.error('Vui lòng nhập thông tin')
                 return;
             }
-            // try {
-            //     let res = await fetchUser(userData);
-            //     const data = res.data
-            //     console.log("check data", data)
-            //     if (data && data.EC === 0) {
-            //         dispatch(setLogin(data.DT))                 
-            //     } else{
-            //     Toast.error(data.EM)
-            //     }
-            // } catch (err) {
-            //     console.error(err)
-            // }
-
-            const payload = {
-                user: user,
-                token: 'fake token',
-                isAuthentication: true,
+            try {
+                let res = await fetchUser(userData);
+                const data = res.data;
+                if (data && data.EC === 0) {
+                    dispatch(setLogin(data.DT))
+                } else {
+                    Toast.error(data.EM)
+                }
+            } catch (err) {
+                console.error(err)
             }
-            dispatch(setLogin(payload))
+
+            // const payload = {
+            //     user: user,
+            //     token: 'fake token',
+            //     isAuthentication: true,
+            // }
+            // dispatch(setLogin(payload))
 
         } else {
-            validInput();
             const Register = {
-                user: user,
+                username: user,
                 password: password,
                 phone: phone
             }
-
-            console.log("check Register", Register)
+            try {
+                const check = validInput(user, password, againPassword, phone);
+                if (check) {
+                    let res = await fetchUserRegister(Register)
+                    const data = res.data;
+                    if (data && data.EC === 0) {
+                        Toast.success(data.EM)
+                    } else {
+                        Toast.error(data.EM)
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            }
         }
 
     }

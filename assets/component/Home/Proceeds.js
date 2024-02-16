@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ScrollView, TouchableOpacity, View, StyleSheet, Text, TextInput, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { Button } from '@rneui/themed';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -17,14 +17,15 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import ToastManager, { Toast } from 'toastify-react-native';
 import dayjs from 'dayjs';
-import {listHistory} from '../../Redux/userListReducer';
-import { useDispatch , useSelector } from 'react-redux';
+import { listHistory } from '../../Redux/userListReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCreate } from '../../service/userService';
 
 const Proceeds = () => {
     const themeBackGround = useSelector(state => state.themeColor.backGround);
-    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
-    const themeColorText = useSelector(state=> state.themeColor.colorText);
-
+    const themeColorActive = useSelector(state => state.themeColor.colorActive);
+    const themeColorText = useSelector(state => state.themeColor.colorText);
+    const userName = useSelector(state => state.login.payload.username);
     const [price, setPrice] = useState('');
     const [note, setNote] = useState('');
     const navigation = useNavigation();
@@ -108,10 +109,10 @@ const Proceeds = () => {
         }
         return dayOfWeekString;
     }
-    useEffect(()=> {
+    useEffect(() => {
         let _day = updateTime(currentDate);
         setDay(_day)
-    },[])
+    }, [])
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -142,20 +143,22 @@ const Proceeds = () => {
 
         }
     }
-    const handleClick = () => {
+    const handleClick = async () => {
         const category = renderList.find(item => item.active == true);
         const clock = dayjs();
         if (price && price.length > 0) {
             const arr = {
-                day : day ,
+                username: userName,
+                day: day,
                 time: currentDate.format('DD-MM-YYYY'),
-                clock : clock.format("HH:mm:ss"),
+                clock: clock.format("HH:mm:ss"),
                 price: price,
                 note: note,
                 category: category ? category.title : 'Khác',
-                type : 'proceeds',
+                type: 'proceeds',
             }
-            dispatch(listHistory(arr))
+            // dispatch(listHistory(arr))
+            await fetchCreate(arr);
             setPrice('');
             setNote('');
             Toast.success('Nhập thành công', 'top')
@@ -170,15 +173,15 @@ const Proceeds = () => {
         const cleanText = text.replace(/\D/g, '');
         const formattedText = cleanText.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         setPrice(formattedText);
-      };
+    };
     return (
         <TouchableWithoutFeedback onPress={handlePressScreen}>
             <View style={styles.container} >
-            <ToastManager textStyle={{fontSize:14}} width={300} height={50} positionValue={-80} />
+                <ToastManager textStyle={{ fontSize: 14 }} width={300} height={50} positionValue={-80} />
                 <View style={styles.Input}>
                     <FontAwesomeIcon style={styles.icon} icon={faCalendar} />
-                    <TextInput style={{ width: '100%' , color:'#ccc' }}
-                         value={`${day}-${currentDate.format('DD-MM-YYYY')}`}
+                    <TextInput style={{ width: '100%', color: '#ccc' }}
+                        value={`${day}-${currentDate.format('DD-MM-YYYY')}`}
                         editable={false}
                     />
 
@@ -207,13 +210,13 @@ const Proceeds = () => {
                     <View style={styles.listItem}>
                         {renderList.map((item, index) => {
                             return (
-                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index} 
-                                // style={item.active === false ? styles.boxList : styles.boxListActive}
-                                style={[
-                                    styles.boxList,
-                                    item.active === false ? null : styles.boxListActive,
-                                    { borderColor: item.active === false ? themeBackGround : themeColorActive }
-                                  ]}
+                                <TouchableOpacity onPress={() => handleChangeList(item.id)} key={index}
+                                    // style={item.active === false ? styles.boxList : styles.boxListActive}
+                                    style={[
+                                        styles.boxList,
+                                        item.active === false ? null : styles.boxListActive,
+                                        { borderColor: item.active === false ? themeBackGround : themeColorActive }
+                                    ]}
                                 >
                                     <FontAwesomeIcon style={{ color: `${item.colorIcon}` }} icon={item.icon} fade />
                                     <Text style={{ paddingVertical: 4 }}>{item.title}</Text>
@@ -227,7 +230,7 @@ const Proceeds = () => {
                         onPress={handleClick}
                         style={{ marginTop: 15 }}
                         buttonStyle={{ backgroundColor: themeBackGround, borderRadius: 10 }}
-                        titleStyle={{ color:themeColorText }}
+                        titleStyle={{ color: themeColorText }}
                         icon={{
                             name: 'arrow-right',
                             type: 'font-awesome',
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: 5,
         marginVertical: 5,
-        borderWidth: 3,
+        borderWidth: 2,
         borderColor: "#000",
         alignItems: 'center',
         paddingHorizontal: 10,

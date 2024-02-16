@@ -12,34 +12,55 @@ import {
     Platform,
     Dimensions
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch } from 'react-redux';
+import {listHistory} from '../../Redux/userListReducer';
+import {fetchHistory } from "../../service/userService"
+
+
 
 
 const Calender = () => {
+    const userName = useSelector(state => state.login.payload.username);
+    const dispatch = useDispatch();
+
+    const getListUser =  async () => {
+        let pushHistory = await fetchHistory(userName);
+        if(pushHistory.data.EC === 0) {
+            dispatch(listHistory(pushHistory.data.DT))
+        }
+    }
+    useEffect(()=>{
+        getListUser();
+    },[])
+
     const windowHeight = Dimensions.get('window').height;
     const list = useSelector(state => state.user.listHistory);
     const themeBackGround = useSelector(state => state.themeColor.backGround);
-    const themeColorActive = useSelector(state=> state.themeColor.colorActive);
-    const themeColorText = useSelector(state=> state.themeColor.colorText);
+    const themeColorActive = useSelector(state => state.themeColor.colorActive);
+    const themeColorText = useSelector(state => state.themeColor.colorText);
+
+
 
 
 
     const [history, setHistory] = useState([]);
     const buildHistory = () => {
-        // Sắp xếp mảng theo key thời gian
+        // // Sắp xếp mảng theo key thời gian
+        // const _list = [...list]
+        // let mergedArray = _list.sort((a, b) => {
+        //     const timeA = a.clock.split(":").map(Number);
+        //     const timeB = b.clock.split(":").map(Number);
+        //     // So sánh giờ và phút của hai đối tượng
+        //     if (timeA[0] !== timeB[0]) {
+        //         return timeB[0] - timeA[0]; // Sắp xếp giảm dần theo giờ
+        //     } else if (timeB[1] !== timeA[1]) {
+        //         return timeB[1] - timeA[1]; // Sắp xếp giảm dần theo phút
+        //     } else {
+        //         return timeB[2] - timeA[2]; // Sắp xếp giảm dần theo giây
+        //     }
+        // });
         const _list = [...list]
-        let mergedArray = _list.sort((a, b) => {
-            const timeA = a.clock.split(":").map(Number);
-            const timeB = b.clock.split(":").map(Number);
-            // So sánh giờ và phút của hai đối tượng
-            if (timeA[0] !== timeB[0]) {
-                return timeB[0] - timeA[0]; // Sắp xếp giảm dần theo giờ
-            } else if (timeB[1] !== timeA[1]) {
-                return timeB[1] - timeA[1]; // Sắp xếp giảm dần theo phút
-            } else {
-                return timeB[2] - timeA[2]; // Sắp xếp giảm dần theo giây
-            }
-        });
+        let mergedArray = _list.reverse();
         setHistory(mergedArray)
     }
 
@@ -77,11 +98,11 @@ const Calender = () => {
 
     return (
         <>
-            <View style={[styles.container, { height: windowHeight } , {backgroundColor : themeBackGround}]}>
-                <View style={[styles.header,{backgroundColor:themeBackGround}]}>
-                    <Text style={[styles.textHeader,{color:themeColorText}]}>Lịch sử</Text>
+            <View style={[styles.container, { height: windowHeight }, { backgroundColor: themeBackGround }]}>
+                <View style={[styles.header, { backgroundColor: themeBackGround }]}>
+                    <Text style={[styles.textHeader, { color: themeColorText }]}>Lịch sử</Text>
                 </View>
-                <View style={[styles.body,{backgroundColor:themeBackGround}]}>
+                <View style={[styles.body, { backgroundColor: themeBackGround }]}>
                     <View style={styles.bodyHeader}>
                         <View style={styles.bodyHeaderItem}>
                             <Text style={{ fontSize: 12, paddingBottom: 4 }}>Thu nhập</Text>
@@ -102,9 +123,9 @@ const Calender = () => {
                                 return (
                                     <View key={index} style={styles.item}>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <View style={[styles.boxDate ,{backgroundColor : themeBackGround}]}>
-                                                <Text style={{ fontSize: 10, paddingBottom: 5, fontWeight: 700 ,color: themeColorText }}>{item.day}</Text>
-                                                <Text style={{ fontSize: 12 ,color: themeColorText }}>{item.time}</Text>
+                                            <View style={[styles.boxDate, { backgroundColor: themeBackGround }]}>
+                                                <Text style={{ fontSize: 10, paddingBottom: 5, fontWeight: 700, color: themeColorText }}>{item.day}</Text>
+                                                <Text style={{ fontSize: 12, color: themeColorText }}>{item.time}</Text>
                                             </View>
                                             <View>
                                                 <Text style={{ fontSize: 14, fontWeight: 500, paddingBottom: 10 }}>{item.category}</Text>
