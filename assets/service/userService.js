@@ -17,5 +17,9 @@ const fetchCreate = (data) => {
     return axios.post("http://10.0.2.2:8080/api/v1/create-history", {...data})
 
 }
+const fetchDelete = (id) => {
+    return axios.post("http://10.0.2.2:8080/api/v1/delete-history", { id : id})
 
-export { fetchUser,fetchUserRegister ,fetchHistory , fetchCreate}
+}
+
+export { fetchUser,fetchUserRegister ,fetchHistory , fetchCreate , fetchDelete}

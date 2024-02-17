@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     ScrollView,
     TouchableOpacity,
@@ -10,11 +10,14 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     Platform,
-    Dimensions
+    Dimensions,
+    Animated,
 } from 'react-native';
-import { useSelector , useDispatch } from 'react-redux';
-import {listHistory} from '../../Redux/userListReducer';
-import {fetchHistory } from "../../service/userService"
+import { useSelector, useDispatch } from 'react-redux';
+import { listHistory } from '../../Redux/userListReducer';
+import { fetchHistory,fetchDelete } from "../../service/userService";
+import CalenderItem from './CalenderItem';
+import { Toast } from 'toastify-react-native';
 
 
 
@@ -23,15 +26,15 @@ const Calender = () => {
     const userName = useSelector(state => state.login.payload.username);
     const dispatch = useDispatch();
 
-    const getListUser =  async () => {
+    const getListUser = async () => {
         let pushHistory = await fetchHistory(userName);
-        if(pushHistory.data.EC === 0) {
+        if (pushHistory.data.EC === 0) {
             dispatch(listHistory(pushHistory.data.DT))
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         getListUser();
-    },[])
+    }, [])
 
     const windowHeight = Dimensions.get('window').height;
     const list = useSelector(state => state.user.listHistory);
@@ -62,6 +65,7 @@ const Calender = () => {
         const _list = [...list]
         let mergedArray = _list.reverse();
         setHistory(mergedArray)
+        priceTotal(mergedArray)
     }
 
 
@@ -70,7 +74,7 @@ const Calender = () => {
     const [totalMoneySpent, setTotalMoneySpent] = useState(0);
     const [totalProceeds, setTotalProceeds] = useState(0);
 
-    const priceTotal = () => {
+    const priceTotal = (list) => {
         const moneySpent = list.filter((item) => item.type == "moneySpent");
         const proceeds = list.filter((item) => item.type == "proceeds")
         let totalMoneySpent = moneySpent.reduce((a, b) => {
@@ -88,13 +92,19 @@ const Calender = () => {
         setCheckTotal(checkTotal)
     }
     useEffect(() => {
-        priceTotal();
         buildHistory();
     }, [list])
 
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+   const renderComponent = () => {
+    getListUser();
+    buildHistory();
+
+   }
+ 
 
     return (
         <>
@@ -121,28 +131,7 @@ const Calender = () => {
                         {history && history.length > 0 &&
                             history.map((item, index) => {
                                 return (
-                                    <View key={index} style={styles.item}>
-                                        <View style={{ flexDirection: 'row' }}>
-                                            <View style={[styles.boxDate, { backgroundColor: themeBackGround }]}>
-                                                <Text style={{ fontSize: 10, paddingBottom: 5, fontWeight: 700, color: themeColorText }}>{item.day}</Text>
-                                                <Text style={{ fontSize: 12, color: themeColorText }}>{item.time}</Text>
-                                            </View>
-                                            <View>
-                                                <Text style={{ fontSize: 14, fontWeight: 500, paddingBottom: 10 }}>{item.category}</Text>
-                                                <Text style={{ fontSize: 12 }}>{item.note ? item.note : 'Không có ghi chú'}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{ flexDirection: 'column', alignContent: 'flex-end' }}>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                                <Text style={{ color: item.type == 'moneySpent' ? '#DC143C' : '#50C7C7', paddingBottom: 10 }}>
-                                                    {item.type == 'moneySpent' ? `-${item?.price}` : `+${item?.price}`} VND
-                                                </Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                                <Text style={{ fontSize: 12 }}>{item.clock}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
+                                    <CalenderItem index={index} item={item} renderComponent={renderComponent} />                                  
                                 )
                             })
                         }
