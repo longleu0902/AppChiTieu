@@ -19,6 +19,17 @@ const Monthly = (props) => {
     const [chiTieuKhac, setChiTieuKhac] = useState(0);
     const [myPham, setMyPham] = useState(0);
 
+    // tính phần trăm thu nhập
+    const [tienLuong, setTienLuong] = useState(0);
+    const [phuCap, setPhuCap] = useState(0);
+    const [thuNhapTotal, setThuNhapToTal] = useState(0);
+    const [dauTu, setDauTu] = useState(0);
+    const [tienThuong, setTienThuong] = useState(0);
+    const [thuNhapKhac, setThuNhapKhac] = useState(0);
+
+    // console.log("check", anUong, diLai, chiTieuTotal, hoaDon, quanAo, daoThe, lienHoan, chiTieuKhac, myPham, tienLuong, phuCap, thuNhapTotal, dauTu, tienThuong, thuNhapKhac)
+
+
     const [call, setCall] = useState(0)
 
     const list = useSelector(state => state.user.listHistory);
@@ -32,8 +43,8 @@ const Monthly = (props) => {
     }, [list]);
 
     useEffect(() => {
-        if (chiTieu && chiTieu.length > 0) {
-            filterChar(chiTieu);
+        if (chiTieu && chiTieu.length > 0 || thuNhap && thuNhap.length > 0) {
+            filterChar(chiTieu, thuNhap);
         }
     }, [call])
 
@@ -86,96 +97,153 @@ const Monthly = (props) => {
     }
 
 
-    const filterChar = (moneySpent) => {
+    const filterChar = (moneySpent, proceeds) => {
 
         if (moneySpent && moneySpent.length > 0) {
             let total = moneySpent.reduce((a, b) => {
                 let priceWithoutComma = b.price.replace(/,/g, '');
                 return Number(a) + Number(priceWithoutComma)
             }, 0)
-            const _anUong = moneySpent.filter((item) => item.category == 'Ăn uống')
-            let totalAnUong = _anUong.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceAnUong = Number(totalAnUong / total) * 100
-            setAnUong(priceAnUong)
+            if (total > 0) {
+                const _anUong = moneySpent.filter((item) => item.category == 'Ăn uống')
+                let totalAnUong = _anUong.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceAnUong = Number(totalAnUong / total) * 100 || 0
+                setAnUong(priceAnUong)
 
-            const _diLai = moneySpent.filter((item) => item.category == 'Đi lại')
-            let totalDiLai = _diLai.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceDiLai = (totalDiLai / total) * 100
-            setDiLai(priceDiLai)
+                const _diLai = moneySpent.filter((item) => item.category == 'Đi lại')
+                let totalDiLai = _diLai.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceDiLai = Number(totalDiLai / total) * 100 || 0
+                setDiLai(priceDiLai)
 
-            const _chiTieuTotal = moneySpent.filter((item) => item.category == 'Chi tiêu')
-            let totalChiTieu = _chiTieuTotal.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceChiTieu = (totalChiTieu / total) * 100
-            setChiTieuTotal(priceChiTieu)
+                const _chiTieuTotal = moneySpent.filter((item) => item.category == 'Chi tiêu')
+                let totalChiTieu = _chiTieuTotal.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceChiTieu = Number(totalChiTieu / total) * 100 || 0
+                setChiTieuTotal(priceChiTieu)
 
-            const _hoaDon = moneySpent.filter((item) => item.category == 'Hóa đơn')
-            let totalHoaDon = _hoaDon.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceHoaDon = (totalHoaDon / total) * 100
-            setHoaDon(priceHoaDon)
+                const _hoaDon = moneySpent.filter((item) => item.category == 'Hóa đơn')
+                let totalHoaDon = _hoaDon.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceHoaDon = Number(totalHoaDon / total) * 100 || 0
+                setHoaDon(priceHoaDon)
 
-            const _quanAo = moneySpent.filter((item) => item.category == 'Quần áo')
-            let totalQuanAo = _quanAo.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceQuanAo = (totalQuanAo / total) * 100
-            setQuanAo(priceQuanAo)
+                const _quanAo = moneySpent.filter((item) => item.category == 'Quần áo')
+                let totalQuanAo = _quanAo.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceQuanAo = Number(totalQuanAo / total) * 100 || 0
+                setQuanAo(priceQuanAo)
 
-            const _daoThe = moneySpent.filter((item) => item.category == 'Đáo thẻ')
-            let totalDaoThe = _daoThe.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceDaoThe = (totalDaoThe / total) * 100
-            setDaoThe(priceDaoThe)
+                const _daoThe = moneySpent.filter((item) => item.category == 'Đáo thẻ')
+                let totalDaoThe = _daoThe.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceDaoThe = Number(totalDaoThe / total) * 100 || 0
+                setDaoThe(priceDaoThe)
 
-            const _lienHoan = moneySpent.filter((item) => item.category == 'Liên hoan')
-            let totalLienHoan = _lienHoan.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceLienHoan = (totalLienHoan / total) * 100
-            setLienHoan(priceLienHoan)
+                const _lienHoan = moneySpent.filter((item) => item.category == 'Liên hoan')
+                let totalLienHoan = _lienHoan.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceLienHoan = Number(totalLienHoan / total) * 100 || 0
+                setLienHoan(priceLienHoan)
 
-            const chiTieuKhac = moneySpent.filter((item) => item.category == 'Khác')
-            let totalChiTieuKhac = chiTieuKhac.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceChiTieuKhac = (totalChiTieuKhac / total) * 100
-            setChiTieuKhac(priceChiTieuKhac)
+                const chiTieuKhac = moneySpent.filter((item) => item.category == 'Khác')
+                let totalChiTieuKhac = chiTieuKhac.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceChiTieuKhac = Number(totalChiTieuKhac / total) * 100 || 0
+                setChiTieuKhac(priceChiTieuKhac)
 
-            const _myPham = moneySpent.filter((item) => item.category == 'Mỹ phẩm')
-            let totalMyPham = _myPham.reduce((a, b) => {
-                let priceWithoutComma = b.price.replace(/,/g, '');
-                return Number(a) + Number(priceWithoutComma)
-            }, 0)
-            let priceMyPham = (totalMyPham / total) * 100
-            setMyPham(priceMyPham)
+                const _myPham = moneySpent.filter((item) => item.category == 'Mỹ phẩm')
+                let totalMyPham = _myPham.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceMyPham = Number(totalMyPham / total) * 100 || 0
+                setMyPham(priceMyPham)
+            }
+
         }
+
+        if (proceeds && proceeds.length > 0) {
+            let total = proceeds.reduce((a, b) => {
+                let priceWithoutComma = b.price.replace(/,/g, '');
+                return Number(a) + Number(priceWithoutComma)
+            }, 0)
+            if (total > 0) {
+                const _tienLuong = proceeds.filter((item) => item.category == 'Tiền lương')
+                let totalTienLuong = _tienLuong.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceTienLuong = Number(totalTienLuong / total) * 100 || 0
+                setTienLuong(priceTienLuong)
+
+                const _phuCap = proceeds.filter((item) => item.category == 'Tiền phụ cấp')
+                let totalPhuCap = _phuCap.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let pricePhuCap = Number(totalPhuCap / total) * 100 || 0
+                setPhuCap(pricePhuCap)
+
+                const _thuNhapToTal = proceeds.filter((item) => item.category == 'Thu nhập phụ')
+                let totalthuNhapToTal = _thuNhapToTal.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceThuNhapTotal = Number(totalthuNhapToTal / total) * 100 || 0
+                setThuNhapToTal(priceThuNhapTotal)
+
+                const _dauTu = proceeds.filter((item) => item.category == 'Đầu tư')
+                let totalDauTu = _dauTu.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceDauTu = Number(totalDauTu / total) * 100 || 0
+                setDauTu(priceDauTu)
+
+                const _tienThuong = proceeds.filter((item) => item.category == 'Tiền thưởng')
+                let totalTienThuong = _tienThuong.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceTienThuong = Number(totalTienThuong / total) * 100 || 0
+                setTienThuong(priceTienThuong)
+
+                const _thuNhapKhac = proceeds.filter((item) => item.category == 'Khác')
+                let totalThuNhapKhac = _thuNhapKhac.reduce((a, b) => {
+                    let priceWithoutComma = b.price.replace(/,/g, '');
+                    return Number(a) + Number(priceWithoutComma)
+                }, 0)
+                let priceThuNhapKhac = Number(totalThuNhapKhac / total) * 100 || 0
+                setThuNhapKhac(priceThuNhapKhac)
+            }
+
+        }
+        return;
 
     }
 
 
-    // useEffect(() => {
-    //     if (chiTieu && chiTieu.length > 0) {
-    //         filterChar(chiTieu);
-    //     }
-    // }, [list])
-    // console.log("check chiTieu", chiTieu);
 
+
+    // chi tieu lon nhat
     let maxTotalMoneySpent = [
         {
             title: 'Ăn uống',
@@ -222,29 +290,67 @@ const Monthly = (props) => {
         }
     });
 
+    // thu nhap nhieu nhat 
+
+    let maxTotalProceeds = [
+        {
+            title: 'Tiền lương',
+            total: tienLuong
+        },
+        {
+            title: 'Thu nhập',
+            total: phuCap
+        },
+        {
+            title: 'Thu nhập',
+            total: thuNhapTotal
+        },
+        {
+            title: 'Đầu tư',
+            total: dauTu
+        },
+        {
+            title: 'Tiền thưởng',
+            total: tienThuong
+        },
+        {
+            title: 'Khác',
+            total: thuNhapKhac
+        },
+    ]
+    let maxElementProceeds = maxTotalProceeds[0]; // Gán phần tử đầu tiên là phần tử có total lớn nhất
+
+    maxTotalProceeds.forEach((element) => {
+        if (element.total > maxElementProceeds.total) {
+            maxElementProceeds = element; // Gán phần tử có total lớn hơn là phần tử có total lớn nhất
+        }
+    });
+
+
 
 
     //test char
     const pieData = [
-        { value: anUong, color: '#009FFF', gradientCenterColor: '#006DFF' },
-        { value: diLai, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
-        { value: chiTieuTotal, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
-        { value: hoaDon, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
-        { value: quanAo, color: '#ccc', gradientCenterColor: '#000' },
-        { value: myPham, color: '#339933', gradientCenterColor: '#009900' },
-        { value: daoThe, color: '#000', gradientCenterColor: '#FFF' },
-        { value: lienHoan, color: '#FF9966', gradientCenterColor: '#FFFF66' },
-        { value: chiTieuKhac, color: '#CC0033', gradientCenterColor: '#FF6633' },
+        { value: anUong !== 0 ? anUong : 0, color: '#009FFF', gradientCenterColor: '#006DFF' },
+        { value: diLai !== 0 ? diLai : 0, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
+        { value: chiTieuTotal !== 0 ? chiTieuTotal : 0, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
+        { value: hoaDon !== 0 ? hoaDon : 1, color: '#FFA5BA', gradientCenterColor: '#FF7F97', focused: true },
+        { value: quanAo !== 0 ? quanAo : 0, color: '#ccc', gradientCenterColor: '#000' },
+        { value: myPham !== 0 ? myPham : 0, color: '#339933', gradientCenterColor: '#009900' },
+        { value: daoThe !== 0 ? quanAo : 0, color: '#000', gradientCenterColor: '#FFF' },
+        { value: lienHoan !== 0 ? lienHoan : 0, color: '#FF9966', gradientCenterColor: '#FFFF66' },
+        { value: chiTieuKhac !== 0 ? chiTieuKhac : 0, color: '#CC0033', gradientCenterColor: '#FF6633' },
 
     ];
     const pieDataProceeds = [
-        { value: 11, color: '#009FFF', gradientCenterColor: '#006DFF', focused: true },
-        { value: 11, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
-        { value: 11, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
-        { value: 11, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
-        { value: 11, color: '#ccc', gradientCenterColor: '#000' },
-        { value: 11, color: '#339933', gradientCenterColor: '#009900' },
+        { value: tienLuong !== 0 ? tienLuong : 0, color: '#009FFF', gradientCenterColor: '#006DFF' },
+        { value: phuCap !== 0 ? phuCap : 0, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
+        { value: thuNhapTotal !== 0 ? thuNhapTotal : 0, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
+        { value: dauTu !== 0 ? dauTu : 1, color: '#FFA5BA', gradientCenterColor: '#FF7F97', focused: true },
+        { value: tienThuong !== 0 ? tienThuong : 0, color: '#ccc', gradientCenterColor: '#000' },
+        { value: thuNhapKhac !== 0 ? thuNhapKhac : 0, color: '#339933', gradientCenterColor: '#009900' },
     ];
+
 
 
 
@@ -283,7 +389,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Ăn uống: {anUong.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Tiền lương: 47%</Text>
+                            <Text style={{ color: themeColorText }}>Tiền lương:{tienLuong.toFixed(1)}%</Text>
                         }
                     </View>
                     <View
@@ -292,7 +398,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Đi lại:{diLai.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Phụ cấp: 16%</Text>
+                            <Text style={{ color: themeColorText }}>Phụ cấp: {phuCap.toFixed(1)}%</Text>
                         }
                     </View>
                 </View>
@@ -308,7 +414,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Chi tiêu:{chiTieuTotal.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Thu nhập: 40%</Text>
+                            <Text style={{ color: themeColorText }}>Thu nhập: {thuNhapTotal.toFixed(1)}%</Text>
                         }
                     </View>
                     <View
@@ -317,7 +423,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Hóa đơn:{hoaDon.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Đầu tư: 3%</Text>
+                            <Text style={{ color: themeColorText }}>Đầu tư: {dauTu.toFixed(1)}%</Text>
                         }
                     </View>
                 </View>
@@ -333,7 +439,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Quần áo: {quanAo.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Tiền thưởng: 40%</Text>
+                            <Text style={{ color: themeColorText }}>Tiền thưởng: {tienThuong.toFixed(1)}%</Text>
                         }
                     </View>
                     <View
@@ -342,7 +448,7 @@ const Monthly = (props) => {
                         {valueInput === 0 ?
                             <Text style={{ color: themeColorText }}>Mỹ phẩm: {myPham.toFixed(1)}%</Text>
                             :
-                            <Text style={{ color: themeColorText }}>Khác: 3%</Text>
+                            <Text style={{ color: themeColorText }}>Khác: {thuNhapKhac.toFixed(1)}%</Text>
                         }
                     </View>
                 </View>
@@ -412,7 +518,7 @@ const Monthly = (props) => {
                             <Text style={{ color: valueInput === 1 ? "#fff" : '#383838' }}>Thu nhập</Text>
                         </TouchableOpacity>
                     </View>
-                    {chiTieu && chiTieu.length > 0 ?
+                    {(chiTieu && chiTieu.length > 0) || (thuNhap && thuNhap.length > 0) ?
                         <View
                             style={{
                                 marginVertical: 20,
@@ -441,10 +547,12 @@ const Monthly = (props) => {
                                             return (
                                                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                                     <Text
-                                                        style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
-                                                        {maxElement?.total.toFixed(1)}%
+                                                        style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>
+                                                        {valueInput === 0 ? maxElement?.total.toFixed(1) : maxElementProceeds?.total.toFixed(1)}%
                                                     </Text>
-                                                    <Text style={{ fontSize: 14, color: 'white' }}>{maxElement?.title}</Text>
+                                                    <Text style={{ fontSize: 14, color: "#fff" }}>
+                                                        {valueInput === 0 ? maxElement?.title : maxElementProceeds?.title}
+                                                    </Text>
                                                 </View>
                                             );
                                         }}
@@ -452,9 +560,9 @@ const Monthly = (props) => {
                                 </View>
                                 {renderLegendComponent()}
                             </View>
-                        </View> : 
-                        <View style={{alignItems:'center' , flex:1 , flexDirection:'column' ,justifyContent:'center'}}>
-                            <Text style={{fontSize:20,fontWeight:600}} >Không có dữ liệu</Text>
+                        </View> :
+                        <View style={{ alignItems: 'center', flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 600 }} >Không có dữ liệu</Text>
                         </View>
                     }
 

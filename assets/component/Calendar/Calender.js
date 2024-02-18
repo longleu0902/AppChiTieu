@@ -131,7 +131,7 @@ const Calender = () => {
                         {history && history.length > 0 &&
                             history.map((item, index) => {
                                 return (
-                                    <CalenderItem index={index} item={item} renderComponent={renderComponent} />                                  
+                                    <CalenderItem key={index} index={index} item={item} renderComponent={renderComponent} />                                  
                                 )
                             })
                         }
