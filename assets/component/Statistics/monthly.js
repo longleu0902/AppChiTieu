@@ -298,7 +298,7 @@ const Monthly = (props) => {
             total: tienLuong
         },
         {
-            title: 'Thu nhập',
+            title: 'Phụ cấp',
             total: phuCap
         },
         {

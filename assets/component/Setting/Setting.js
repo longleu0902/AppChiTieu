@@ -15,8 +15,10 @@ import { faGear, faFloppyDisk, faRightFromBracket, faChartPie } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { ListItem, CheckBox, Button } from '@rneui/themed';
-import { backGround  , colorActive ,colorText } from '../../Redux/themeColorReducer';
-import {setLogin} from '../../Redux/loginReducer';
+import { backGround, colorActive, colorText } from '../../Redux/themeColorReducer';
+import { setLogin } from '../../Redux/loginReducer';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 
@@ -26,7 +28,8 @@ const Setting = () => {
     const themeColorActive = useSelector(state => state.themeColor.colorActive);
     const themeColorText = useSelector(state => state.themeColor.colorText);
 
-    const [openList, setOpenList] = useState(false)
+    const [openList, setOpenList] = useState(false);
+    const navigate = useNavigation();
 
     const handleOpen = () => {
         setOpenList(prev => !prev)
@@ -90,10 +93,14 @@ const Setting = () => {
 
     const handleLogOut = () => {
         const payload = {
-                token: '',
-                isAuthentication : false
+            token: '',
+            isAuthentication: false
         }
         dispatch(setLogin(payload))
+    }
+
+    const handleOpenReport = () => {
+        navigate.navigate('Report')
     }
     return (
         <>
@@ -132,11 +139,11 @@ const Setting = () => {
                             })}
                         </View>
                         <Button onPress={handleSaveTheme} size='lg' containerStyle={{ marginHorizontal: 20, width: 150 }} radius={"lg"} color={themeBackGround} type="solid">
-                          <Text style={{color:themeColorText,fontWeight:600,fontSize:15}}>Lưu thay đổi</Text> 
+                            <Text style={{ color: themeColorText, fontWeight: 600, fontSize: 15 }}>Lưu thay đổi</Text>
                             <FontAwesomeIcon style={{ color: themeColorText, marginLeft: 15 }} icon={faFloppyDisk} />
                         </Button>
                     </View>}
-                    <TouchableOpacity  style={styles.bodyItem} >
+                    <TouchableOpacity onPress={handleOpenReport} style={styles.bodyItem} >
                         <ListItem containerStyle={{ borderRadius: 10 }}>
                             <ListItem.Content>
                                 <ListItem.Title style={{ color: "#000" }}>

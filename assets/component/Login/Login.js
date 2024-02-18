@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ToastManager, { Toast } from 'toastify-react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogin } from '../../Redux/loginReducer';
-import { fetchUser, fetchUserRegister  } from "../../service/userService"
+import { fetchUser, fetchUserRegister ,fetchHistory,fetchDelete   } from "../../service/userService"
+import { listHistory } from '../../Redux/userListReducer';
+
 
 
 
@@ -60,6 +62,10 @@ const Login = () => {
                 const data = res.data;
                 if (data && data.EC === 0) {
                     dispatch(setLogin(data.DT))
+                    let pushHistory = await fetchHistory(user);
+                    if (pushHistory.data.EC === 0) {
+                        dispatch(listHistory(pushHistory.data.DT))
+                    }
                 } else {
                     Toast.error(data.EM)
                 }
